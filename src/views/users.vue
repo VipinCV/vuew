@@ -1,18 +1,18 @@
 <template>
   <div class="home">
-    <h1>Home Page</h1>
+    <h1>User Management</h1>
     
     <div class="form-container">
-      <h2>Add New Entry</h2>
-      <form @submit.prevent="saveEntry" class="entry-form">
+      <h2>Add New User</h2>
+      <form @submit.prevent="saveUser" class="entry-form">
         <div class="form-group">
           <label for="name">Name:</label>
           <input 
             type="text" 
             id="name" 
-            v-model="newEntry.name" 
+            v-model="newUser.name" 
             required 
-            placeholder="Enter your name"
+            placeholder="Enter name"
           >
         </div>
         
@@ -21,32 +21,36 @@
           <input 
             type="email" 
             id="email" 
-            v-model="newEntry.email" 
+            v-model="newUser.email" 
             required 
-            placeholder="Enter your email"
+            placeholder="Enter email"
           >
         </div>
         
-        <button type="submit" class="submit-btn">Save Entry</button>
+        <button type="submit" class="submit-btn" :disabled="isLoading">
+          {{ isLoading ? 'Saving...' : 'Save User' }}
+        </button>
       </form>
     </div>
     
-    <div class="entries-list" v-if="entries.length > 0">
-      <h2>Saved Entries</h2>
+    <div class="entries-list" v-if="users.length > 0">
+      <h2>User List</h2>
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, index) in entries" :key="index">
-            <td>{{ entry.name }}</td>
-            <td>{{ entry.email }}</td>
+          <tr v-for="user in users" :key="user.id">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
             <td>
-              <button @click="deleteEntry(index)" class="delete-btn">Delete</button>
+              <button @click="deleteUser(user.id)" class="delete-btn">Delete</button>
             </td>
           </tr>
         </tbody>
@@ -54,7 +58,12 @@
     </div>
     
     <div class="no-entries" v-else>
-      <p>No entries saved yet.</p>
+      <p v-if="!isLoading">No users found.</p>
+      <p v-else>Loading users...</p>
+    </div>
+
+    <div v-if="error" class="error-message">
+      {{ error }}
     </div>
   </div>
 </template>
@@ -64,51 +73,112 @@ export default {
   name: 'Home',
   data() {
     return {
-      newEntry: {
+      newUser: {
         name: '',
         email: ''
       },
-      entries: []
+      users: [],
+      isLoading: false,
+      error: null
     }
   },
   methods: {
-    saveEntry() {
-      // Add the new entry to the entries array
-      this.entries.push({
-        name: this.newEntry.name,
-        email: this.newEntry.email
-      });
-      
-      // Reset the form
-      this.newEntry = {
-        name: '',
-        email: ''
-      };
-      
-      // Optional: Save to localStorage
-      localStorage.setItem('entries', JSON.stringify(this.entries));
+    async fetchUsers() {
+      this.isLoading = true;
+      this.error = null;
+      try {
+        const response = await fetch('https://mobileapi-fbpw.onrender.com/api/User', {
+          method: 'GET',
+          headers: {
+            'accept': '*/*'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        
+        this.users = await response.json();
+      } catch (err) {
+        this.error = err.message;
+        console.error('Error fetching users:', err);
+      } finally {
+        this.isLoading = false;
+      }
     },
-    deleteEntry(index) {
-      // Remove the entry at the specified index
-      this.entries.splice(index, 1);
+    async saveUser() {
+      this.isLoading = true;
+      this.error = null;
+      try {
+        const response = await fetch('https://mobileapi-fbpw.onrender.com/api/User', {
+          method: 'POST',
+          headers: {
+            'accept': '*/*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: this.newUser.name,
+            email: this.newUser.email
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to save user');
+        }
+        
+        // Reset form
+        this.newUser = {
+          name: '',
+          email: ''
+        };
+        
+        // Refresh the user list
+        await this.fetchUsers();
+      } catch (err) {
+        this.error = err.message;
+        console.error('Error saving user:', err);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async deleteUser(userId) {
+      if (!confirm('Are you sure you want to delete this user?')) {
+        return;
+      }
       
-      // Update localStorage
-      localStorage.setItem('entries', JSON.stringify(this.entries));
+      this.isLoading = true;
+      this.error = null;
+      try {
+        const response = await fetch(`https://mobileapi-fbpw.onrender.com/api/User/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'accept': '*/*'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete user');
+        }
+        
+        // Refresh the user list
+        await this.fetchUsers();
+      } catch (err) {
+        this.error = err.message;
+        console.error('Error deleting user:', err);
+      } finally {
+        this.isLoading = false;
+      }
     }
   },
-  mounted() {
-    // Load saved entries from localStorage when component mounts
-    const savedEntries = localStorage.getItem('entries');
-    if (savedEntries) {
-      this.entries = JSON.parse(savedEntries);
-    }
+  async mounted() {
+    await this.fetchUsers();
   }
 }
 </script>
 
 <style scoped>
 .home {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -156,12 +226,18 @@ export default {
   align-self: flex-start;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
   background-color: #1d4ed8;
+}
+
+.submit-btn:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
 }
 
 .entries-list {
   margin-top: 2rem;
+  overflow-x: auto;
 }
 
 table {
@@ -200,5 +276,14 @@ th {
   text-align: center;
   padding: 2rem;
   color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-top: 1rem;
 }
 </style>
