@@ -41,20 +41,16 @@
 
 <style>
 :root {
-  --primary-color: #4361ee;
-  --secondary-color: #3a0ca3;
-  --accent-color: #4895ef;
-  --light-accent: #4cc9f0;
-  --text-color: #2b2d42;
-  --light-text: #f8f9fa;
-  --background-color: #f8f9fa;
-  --card-bg: #ffffff;
-  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --border-radius: 12px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --primary-color: #4A90E2;
+  --secondary-color: #D4E157;
+  --accent-color: #FF7043;
+  --background-color: #F5F5F5;
+  --text-color: #212121;
+  --light-text: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --font-family: 'Poppins', sans-serif;
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
 }
 
 body {
@@ -75,8 +71,8 @@ body {
 header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: var(--light-text);
-  padding: 0.8em 2em;
-  box-shadow: var(--shadow-md);
+  padding: 1em 2em;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -96,18 +92,7 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: white;
-}
-
-.logo-icon {
-  font-size: 1.5rem;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  color: var(--light-text);
 }
 
 .nav-links {
@@ -127,12 +112,12 @@ header {
 }
 
 .nav-link:hover {
-  color: var(--light-accent);
+  color: var(--accent-color);
   transform: translateY(-2px);
 }
 
 .nav-link.router-link-exact-active {
-  color: var(--light-accent);
+  color: var(--accent-color);
   font-weight: 600;
 }
 
@@ -143,7 +128,7 @@ header {
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: var(--light-accent);
+  background-color: var(--accent-color);
   border-radius: 3px;
   animation: underline 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
@@ -172,7 +157,7 @@ header {
 
 .dropbtn:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: var(--light-accent);
+  color: var(--accent-color);
 }
 
 .arrow {
@@ -189,7 +174,7 @@ header {
 
 .dropdown:hover .arrow {
   transform: rotate(225deg);
-  border-color: var(--light-accent);
+  border-color: var(--accent-color);
 }
 
 .dropdown-content {
@@ -197,7 +182,7 @@ header {
   position: absolute;
   background-color: var(--card-bg);
   min-width: 200px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   border-radius: var(--border-radius);
   z-index: 10;
   overflow: hidden;
@@ -218,8 +203,8 @@ header {
 }
 
 .dropdown-item:hover {
-  background-color: rgba(72, 149, 239, 0.1);
-  color: var(--primary-color);
+  background-color: rgba(255, 112, 67, 0.1);
+  color: var(--accent-color);
   transform: translateX(5px);
 }
 
@@ -256,30 +241,30 @@ main {
     align-items: flex-start;
     padding: 1rem;
   }
-  
+
   .nav-links {
     width: 100%;
     flex-direction: column;
     gap: 0;
     margin-top: 1rem;
   }
-  
+
   .nav-link {
     padding: 1rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
   }
-  
+
   .dropdown {
     width: 100%;
   }
-  
+
   .dropbtn {
     width: 100%;
     justify-content: space-between;
     padding: 1rem 0;
   }
-  
+
   .dropdown-content {
     position: static;
     box-shadow: none;
@@ -291,12 +276,12 @@ main {
     max-height: 0;
     transition: max-height 0.3s ease-out;
   }
-  
+
   .dropdown:hover .dropdown-content {
     display: block;
     max-height: 500px;
   }
-  
+
   main {
     padding: 1.5rem;
   }
