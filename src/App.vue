@@ -40,70 +40,134 @@
 </template>
 
 <style>
-<style>
 :root {
-  --primary-color: #6366f1;  /* Indigo */
-  --secondary-color: #4f46e5; /* Deep indigo */
-  --accent-color: #ec4899;   /* Pink */
-  --light-accent: #a855f7;   /* Purple */
-  --text-color: #1e293b;     /* Slate-800 */
-  --light-text: #f8fafc;     /* Slate-50 */
-  --background-color: #f1f5f9; /* Slate-100 */
+  --primary-color: #4361ee;
+  --secondary-color: #3a0ca3;
+  --accent-color: #4895ef;
+  --light-accent: #4cc9f0;
+  --text-color: #2b2d42;
+  --light-text: #f8f9fa;
+  --background-color: #f8f9fa;
   --card-bg: #ffffff;
-  --success: #10b981;        /* Emerald */
-  --warning: #f59e0b;        /* Amber */
-  --error: #ef4444;         /* Red */
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --border-radius: 8px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 body {
+  font-family: var(--font-family);
+  margin: 0;
   background-color: var(--background-color);
   color: var(--text-color);
+  line-height: 1.6;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
 }
 
 header {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 100%
-  );
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--light-text);
+  padding: 0.8em 2em;
   box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .logo {
-  background: linear-gradient(
-    to right,
-    var(--light-accent),
-    var(--accent-color)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.nav-links {
+  display: flex;
+  gap: 2em;
+  align-items: center;
 }
 
 .nav-link {
   color: var(--light-text);
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: var(--transition);
+  padding: 0.8em 0;
+  font-size: 1.05rem;
 }
 
 .nav-link:hover {
   color: var(--light-accent);
+  transform: translateY(-2px);
 }
 
 .nav-link.router-link-exact-active {
   color: var(--light-accent);
+  font-weight: 600;
 }
 
 .nav-link.router-link-exact-active::after {
-  background-color: var(--accent-color);
+  content: '';
+  position: absolute;
+  bottom: 0.5em;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--light-accent);
+  border-radius: 3px;
+  animation: underline 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 /* Dropdown styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
 .dropbtn {
+  background-color: transparent;
   color: var(--light-text);
+  padding: 0.8em 1.2em;
+  font-size: 1.05rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: var(--transition);
+  border-radius: 8px;
 }
 
 .dropbtn:hover {
@@ -111,37 +175,130 @@ header {
   color: var(--light-accent);
 }
 
+.arrow {
+  border: solid var(--light-text);
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transition: var(--transition);
+}
+
+.down {
+  transform: rotate(45deg);
+}
+
+.dropdown:hover .arrow {
+  transform: rotate(225deg);
+  border-color: var(--light-accent);
+}
+
 .dropdown-content {
+  display: none;
+  position: absolute;
   background-color: var(--card-bg);
-  border: 1px solid #e2e8f0;
+  min-width: 200px;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius);
+  z-index: 10;
+  overflow: hidden;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: var(--transition);
+  padding: 0.5rem 0;
 }
 
 .dropdown-item {
   color: var(--text-color);
+  padding: 0.8rem 1.2rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: var(--transition);
 }
 
 .dropdown-item:hover {
-  background-color: #f8fafc;
+  background-color: rgba(72, 149, 239, 0.1);
   color: var(--primary-color);
+  transform: translateX(5px);
 }
 
-/* Main content area */
+.item-icon {
+  font-size: 1.1rem;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 main {
-  background-color: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  margin: 2rem auto;
-  padding: 2rem;
+  padding: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Responsive mobile menu */
+@keyframes underline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  
+  .nav-links {
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1rem;
+  }
+  
   .nav-link {
+    padding: 1rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+  
+  .dropbtn {
+    width: 100%;
+    justify-content: space-between;
+    padding: 1rem 0;
   }
   
   .dropdown-content {
-    background-color: rgba(255, 255, 255, 0.05);
+    position: static;
+    box-shadow: none;
+    display: none;
+    width: 100%;
+    border-radius: 0;
+    transform: none;
+    opacity: 1;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
   }
-} 
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+    max-height: 500px;
+  }
+  
+  main {
+    padding: 1.5rem;
+  }
+}
 </style>
