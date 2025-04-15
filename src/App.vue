@@ -1,3 +1,45 @@
+<template>
+  <div id="app">
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span>MyApp</span>
+        </div>
+        <div class="nav-links">
+          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/about" class="nav-link">About</router-link>
+          <div class="dropdown">
+            <button class="dropbtn">
+              Services
+              <i class="arrow down"></i>
+            </button>
+            <div class="dropdown-content">
+              <router-link to="/users" class="dropdown-item">
+                <span class="item-icon">👥</span>
+                <span>Users</span>
+              </router-link>
+              <router-link to="/service2" class="dropdown-item">
+                <span class="item-icon">🛠️</span>
+                <span>Service 2</span>
+              </router-link>
+              <router-link to="/service3" class="dropdown-item">
+                <span class="item-icon">🔧</span>
+                <span>Service 3</span>
+              </router-link>
+            </div>
+          </div>
+          <router-link to="/contact" class="nav-link">Contact</router-link>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <router-view />
+    </main>
+  </div>
+</template>
+
+<style>
 <style>
 :root {
   --primary-color: #6366f1;  /* Indigo */
@@ -101,5 +143,5 @@ main {
   .dropdown-content {
     background-color: rgba(255, 255, 255, 0.05);
   }
-}
+} 
 </style>
