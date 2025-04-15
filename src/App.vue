@@ -216,4 +216,3 @@ main {
   .navbar
 ::contentReference[oaicite:1]{index=1}
  
-</style>
