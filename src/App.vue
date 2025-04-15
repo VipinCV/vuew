@@ -2,18 +2,31 @@
   <div id="app">
     <header>
       <nav class="navbar">
-        <div class="logo">MyApp</div>
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span>MyApp</span>
+        </div>
         <div class="nav-links">
           <router-link to="/" class="nav-link">Home</router-link>
           <router-link to="/about" class="nav-link">About</router-link>
           <div class="dropdown">
-            <button class="dropbtn">Services 
+            <button class="dropbtn">
+              Services
               <i class="arrow down"></i>
             </button>
             <div class="dropdown-content">
-              <router-link to="/users">users</router-link>
-              <router-link to="/service2">Service 2</router-link>
-              <router-link to="/service3">Service 3</router-link>
+              <router-link to="/users" class="dropdown-item">
+                <span class="item-icon">👥</span>
+                <span>Users</span>
+              </router-link>
+              <router-link to="/service2" class="dropdown-item">
+                <span class="item-icon">🛠️</span>
+                <span>Service 2</span>
+              </router-link>
+              <router-link to="/service3" class="dropdown-item">
+                <span class="item-icon">🔧</span>
+                <span>Service 3</span>
+              </router-link>
             </div>
           </div>
           <router-link to="/contact" class="nav-link">Contact</router-link>
@@ -28,15 +41,20 @@
 
 <style>
 :root {
-  --primary-color: #2563eb;
-  --secondary-color: #1e40af;
-  --accent-color: #3b82f6;
-  --light-accent: #93c5fd;
-  --text-color: #1f2937;
-  --light-text: #f9fafb;
-  --background-color: #f3f4f6;
+  --primary-color: #4361ee;
+  --secondary-color: #3a0ca3;
+  --accent-color: #4895ef;
+  --light-accent: #4cc9f0;
+  --text-color: #2b2d42;
+  --light-text: #f8f9fa;
+  --background-color: #f8f9fa;
   --card-bg: #ffffff;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 body {
@@ -52,37 +70,49 @@ body {
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--background-color) 0%, #e5e7eb 100%);
 }
 
 header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: var(--light-text);
-  padding: 1em 2em;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.8em 2em;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  background: linear-gradient(to right, #ffffff, var(--light-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .nav-links {
   display: flex;
-  gap: 1.5em;
+  gap: 2em;
   align-items: center;
 }
 
@@ -91,8 +121,9 @@ header {
   text-decoration: none;
   font-weight: 500;
   position: relative;
-  transition: all 0.3s ease-in-out;
-  padding: 0.5em 0;
+  transition: var(--transition);
+  padding: 0.8em 0;
+  font-size: 1.05rem;
 }
 
 .nav-link:hover {
@@ -108,13 +139,13 @@ header {
 .nav-link.router-link-exact-active::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: 0.5em;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 3px;
   background-color: var(--light-accent);
-  border-radius: 2px;
-  animation: underline 0.3s ease-out;
+  border-radius: 3px;
+  animation: underline 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 /* Dropdown styles */
@@ -126,19 +157,21 @@ header {
 .dropbtn {
   background-color: transparent;
   color: var(--light-text);
-  padding: 0.5em 1em;
-  font-size: 1em;
+  padding: 0.8em 1.2em;
+  font-size: 1.05rem;
   border: none;
   cursor: pointer;
   font-weight: 500;
   font-family: inherit;
   display: flex;
   align-items: center;
-  gap: 0.3em;
-  transition: all 0.3s ease;
+  gap: 0.5em;
+  transition: var(--transition);
+  border-radius: 8px;
 }
 
 .dropbtn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
   color: var(--light-accent);
 }
 
@@ -147,7 +180,7 @@ header {
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 3px;
-  transition: transform 0.3s ease;
+  transition: var(--transition);
 }
 
 .down {
@@ -163,27 +196,35 @@ header {
   display: none;
   position: absolute;
   background-color: var(--card-bg);
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
-  border-radius: 0.5em;
-  z-index: 1;
+  min-width: 200px;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius);
+  z-index: 10;
   overflow: hidden;
-  transform: translateY(5px);
+  transform: translateY(10px);
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: var(--transition);
+  padding: 0.5rem 0;
 }
 
-.dropdown-content a {
+.dropdown-item {
   color: var(--text-color);
-  padding: 12px 16px;
+  padding: 0.8rem 1.2rem;
   text-decoration: none;
-  display: block;
-  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: var(--transition);
 }
 
-.dropdown-content a:hover {
-  background-color: var(--light-accent);
-  color: var(--light-text);
+.dropdown-item:hover {
+  background-color: rgba(72, 149, 239, 0.1);
+  color: var(--primary-color);
+  transform: translateX(5px);
+}
+
+.item-icon {
+  font-size: 1.1rem;
 }
 
 .dropdown:hover .dropdown-content {
@@ -193,8 +234,8 @@ header {
 }
 
 main {
-  padding: 2em;
-  max-width: 1200px;
+  padding: 2.5rem;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
 }
@@ -208,16 +249,35 @@ main {
   }
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 1rem;
   }
   
   .nav-links {
     width: 100%;
     flex-direction: column;
     gap: 0;
+    margin-top: 1rem;
+  }
+  
+  .nav-link {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+  
+  .dropbtn {
+    width: 100%;
+    justify-content: space-between;
+    padding: 1rem 0;
   }
   
   .dropdown-content {
@@ -225,10 +285,20 @@ main {
     box-shadow: none;
     display: none;
     width: 100%;
+    border-radius: 0;
+    transform: none;
+    opacity: 1;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
   }
   
   .dropdown:hover .dropdown-content {
     display: block;
+    max-height: 500px;
+  }
+  
+  main {
+    padding: 1.5rem;
   }
 }
 </style>
