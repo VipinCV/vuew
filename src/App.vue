@@ -11,7 +11,7 @@
               <i class="arrow down"></i>
             </button>
             <div class="dropdown-content">
-              <router-link to="/service1">Service 1</router-link>
+              <router-link to="/users">users</router-link>
               <router-link to="/service2">Service 2</router-link>
               <router-link to="/service3">Service 3</router-link>
             </div>
