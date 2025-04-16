@@ -20,8 +20,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in users" :key="user.UserId">
-              <td>{{ user.UserId }}</td>
+            <tr v-for="user in users" :key="user.userId">
+              <td>{{ user.userId }}</td>
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>
