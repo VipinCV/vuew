@@ -1,78 +1,81 @@
 <template>
-  <div class="p-6 max-w-3xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">Inventory Management</h1>
+  <div class="min-h-screen bg-gradient-to-br from-gray-100 to-white p-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white shadow-xl rounded-xl p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">🧾 Inventory Management</h1>
 
-    <!-- Add Product Form -->
-    <form @submit.prevent="submitProduct" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div>
-        <label class="block mb-1 font-medium">Product Name</label>
-        <input v-model="name" type="text" class="w-full border rounded px-3 py-2" required />
-      </div>
-      <div>
-        <label class="block mb-1 font-medium">Price</label>
-        <input v-model.number="price" type="number" class="w-full border rounded px-3 py-2" required />
-      </div>
-      <div>
-        <label class="block mb-1 font-medium">Stock</label>
-        <input v-model.number="stock" type="number" class="w-full border rounded px-3 py-2" required />
-      </div>
-      <div class="md:col-span-3">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Add Product
-        </button>
-      </div>
-    </form>
+        <!-- Add Product Form -->
+        <form @submit.prevent="submitProduct" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
+            <input v-model="name" type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Price</label>
+            <input v-model.number="price" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Stock</label>
+            <input v-model.number="stock" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+          </div>
+          <div class="md:col-span-3 flex justify-end">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition-all duration-200">
+              ➕ Add Product
+            </button>
+          </div>
+        </form>
 
-    <!-- Feedback -->
-    <div v-if="message" class="text-green-700 font-medium mb-4">{{ message }}</div>
-    <div v-if="error" class="text-red-600 mb-4">{{ error }}</div>
+        <!-- Feedback Messages -->
+        <div v-if="message" class="mb-4 text-green-600 font-medium bg-green-100 rounded px-4 py-2 shadow-sm">
+          {{ message }}
+        </div>
+        <div v-if="error" class="mb-4 text-red-600 font-medium bg-red-100 rounded px-4 py-2 shadow-sm">
+          {{ error }}
+        </div>
 
-    <!-- Product Table -->
-    <div v-if="products.length > 0" class="overflow-x-auto">
-      <table class="min-w-full border border-gray-300 text-sm text-left">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-4 py-2 border">ID</th>
-            <th class="px-4 py-2 border">Name</th>
-            <th class="px-4 py-2 border">Purchased</th>
-            <th class="px-4 py-2 border">Sold</th>
-            <th class="px-4 py-2 border">Stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="p in products" :key="p.productId">
-            <td class="px-4 py-2 border">{{ p.productId }}</td>
-            <td class="px-4 py-2 border">{{ p.productName }}</td>
-            <td class="px-4 py-2 border">{{ p.totalPurchased }}</td>
-            <td class="px-4 py-2 border">{{ p.totalSold }}</td>
-            <td class="px-4 py-2 border">{{ p.currentStock }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <!-- Product Table -->
+        <div v-if="products.length > 0" class="overflow-x-auto">
+          <table class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm shadow-sm">
+            <thead class="bg-blue-100 text-blue-900 uppercase text-xs">
+              <tr>
+                <th class="px-4 py-3 text-left">ID</th>
+                <th class="px-4 py-3 text-left">Name</th>
+                <th class="px-4 py-3 text-left">Purchased</th>
+                <th class="px-4 py-3 text-left">Sold</th>
+                <th class="px-4 py-3 text-left">Stock</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="p in products" :key="p.productId" class="hover:bg-gray-50">
+                <td class="px-4 py-3 font-mono text-gray-600">{{ p.productId }}</td>
+                <td class="px-4 py-3">{{ p.productName }}</td>
+                <td class="px-4 py-3 text-blue-700 font-semibold">{{ p.totalPurchased }}</td>
+                <td class="px-4 py-3 text-red-600 font-semibold">{{ p.totalSold }}</td>
+                <td class="px-4 py-3 font-bold text-green-700">{{ p.currentStock }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else class="text-gray-500 mt-4">No products yet. Add one above!</div>
+      </div>
     </div>
-
-    <div v-else class="text-gray-500">No products yet.</div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 
-// form values
 const name = ref('')
 const price = ref(0)
 const stock = ref(0)
 
-// feedback
 const message = ref('')
 const error = ref('')
-
-// product list
 const products = ref([])
 
 const baseApi = 'https://mobileapi-fbpw.onrender.com/api/Inventory'
 
-// Add product
 const submitProduct = async () => {
   message.value = ''
   error.value = ''
@@ -86,18 +89,17 @@ const submitProduct = async () => {
     const response = await fetch(url, { method: 'POST' })
     if (!response.ok) throw new Error('Server returned ' + response.status)
 
-    message.value = 'Product added successfully.'
+    message.value = '✅ Product added successfully!'
     name.value = ''
     price.value = 0
     stock.value = 0
 
     await fetchProducts()
   } catch (err) {
-    error.value = 'Failed to add product: ' + err.message
+    error.value = '❌ Failed to add product: ' + err.message
   }
 }
 
-// Fetch product table
 const fetchProducts = async () => {
   try {
     const res = await fetch(`${baseApi}/vw-stock`)
@@ -108,14 +110,13 @@ const fetchProducts = async () => {
   }
 }
 
-// Load on page mount
 onMounted(() => {
   fetchProducts()
 })
 </script>
 
 <style scoped>
-input {
-  outline: none;
+input:focus {
+  border-color: #60a5fa;
 }
 </style>
