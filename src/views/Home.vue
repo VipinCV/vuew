@@ -1,63 +1,56 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-100 to-white p-6">
-    <div class="max-w-4xl mx-auto">
-      <div class="bg-white shadow-xl rounded-xl p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">🧾 Inventory Management</h1>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-white p-8">
+    <div class="max-w-5xl mx-auto">
+      <div class="bg-white shadow-2xl rounded-2xl p-8">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-8">📦 Product Inventory</h1>
 
-        <!-- Add Product Form -->
-        <form @submit.prevent="submitProduct" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <!-- Product Form -->
+        <form @submit.prevent="submitProduct" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
-            <input v-model="name" type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+            <label class="block text-sm font-medium text-gray-600 mb-1">Product Name</label>
+            <input v-model="name" type="text" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Price</label>
-            <input v-model.number="price" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+            <label class="block text-sm font-medium text-gray-600 mb-1">Price ($)</label>
+            <input v-model.number="price" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Stock</label>
-            <input v-model.number="stock" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring focus:ring-blue-200" required />
+            <label class="block text-sm font-medium text-gray-600 mb-1">Stock Qty</label>
+            <input v-model.number="stock" type="number" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
           </div>
-          <div class="md:col-span-3 flex justify-end">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition-all duration-200">
+          <div class="md:col-span-3 text-right">
+            <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-2 rounded-xl shadow-lg hover:scale-105 transform transition">
               ➕ Add Product
             </button>
           </div>
         </form>
 
-        <!-- Feedback Messages -->
-        <div v-if="message" class="mb-4 text-green-600 font-medium bg-green-100 rounded px-4 py-2 shadow-sm">
+        <!-- Feedback -->
+        <div v-if="message" class="mb-4 bg-green-100 text-green-700 px-4 py-2 rounded-lg shadow-sm">
           {{ message }}
         </div>
-        <div v-if="error" class="mb-4 text-red-600 font-medium bg-red-100 rounded px-4 py-2 shadow-sm">
+        <div v-if="error" class="mb-4 bg-red-100 text-red-600 px-4 py-2 rounded-lg shadow-sm">
           {{ error }}
         </div>
 
-        <!-- Product Table -->
-        <div v-if="products.length > 0" class="overflow-x-auto">
-          <table class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm shadow-sm">
-            <thead class="bg-blue-100 text-blue-900 uppercase text-xs">
-              <tr>
-                <th class="px-4 py-3 text-left">ID</th>
-                <th class="px-4 py-3 text-left">Name</th>
-                <th class="px-4 py-3 text-left">Purchased</th>
-                <th class="px-4 py-3 text-left">Sold</th>
-                <th class="px-4 py-3 text-left">Stock</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="p in products" :key="p.productId" class="hover:bg-gray-50">
-                <td class="px-4 py-3 font-mono text-gray-600">{{ p.productId }}</td>
-                <td class="px-4 py-3">{{ p.productName }}</td>
-                <td class="px-4 py-3 text-blue-700 font-semibold">{{ p.totalPurchased }}</td>
-                <td class="px-4 py-3 text-red-600 font-semibold">{{ p.totalSold }}</td>
-                <td class="px-4 py-3 font-bold text-green-700">{{ p.currentStock }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Product Grid -->
+        <div v-if="products.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="p in products"
+            :key="p.productId"
+            class="bg-white border border-gray-200 rounded-2xl p-6 shadow hover:shadow-xl transition-all"
+          >
+            <h3 class="text-lg font-semibold text-gray-800">{{ p.productName }}</h3>
+            <p class="text-gray-600 mt-1">Price: <span class="text-blue-700 font-semibold">${{ p.price }}</span></p>
+            <div class="mt-3 space-y-1">
+              <p class="text-green-700 text-sm">🛒 Purchased: <strong>{{ p.totalPurchased }}</strong></p>
+              <p class="text-red-600 text-sm">📤 Sold: <strong>{{ p.totalSold }}</strong></p>
+              <p class="text-gray-800 text-sm font-bold">📦 In Stock: {{ p.currentStock }}</p>
+            </div>
+          </div>
         </div>
 
-        <div v-else class="text-gray-500 mt-4">No products yet. Add one above!</div>
+        <div v-else class="text-center text-gray-500 mt-6">No products found. Add one to begin!</div>
       </div>
     </div>
   </div>
@@ -116,7 +109,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-input:focus {
-  border-color: #60a5fa;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
