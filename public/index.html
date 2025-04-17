@@ -2,10 +2,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Vue 3 SPA</title>
+    <meta charset="UTF-8" />
+    <title>Vue + Tailwind CDN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Optional Tailwind Customization -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#4f46e5',
+              secondary: '#64748b',
+            },
+          },
+        },
+      }
+    </script>
   </head>
-  <body>
-    <div id="app"></div>
-  </body>
+  <body class="bg-gray-50 text-gray-800">
+    <div id="app"></div> 
+  </body> 
 </html>
