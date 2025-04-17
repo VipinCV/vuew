@@ -9,7 +9,7 @@
         <select v-model="selectedProductId" class="w-full border rounded px-3 py-2" required>
           <option value="" disabled>Select a product</option>
           <option v-for="product in products" :key="product.productId" :value="product.productId">
-            {{ product.productName }} - ${{ product.price }}
+            {{ product.productName }} - Rs:{{ product.price }}
           </option>
         </select>
       </div>
