@@ -105,7 +105,7 @@ const submitSale = async () => {
   }
 
   try {
-    const res = await fetch(`${baseApi}/complete-multi-sale`, {
+    const res = await fetch(`${baseApi}/complete-sale`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
