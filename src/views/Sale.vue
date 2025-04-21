@@ -11,19 +11,27 @@
         </div>
 
         <!-- Sale Items -->
-        <div v-for="(item, index) in saleItems" :key="index" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div v-for="(item, index) in saleItems" :key="index" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
           <div class="col-span-2">
             <label class="block font-semibold text-gray-700 mb-1">Select Product</label>
-            <select v-model="item.productId" required class="w-full border px-3 py-2 rounded-xl">
+            <select v-model="item.productId" @change="updatePrice(index)" required class="w-full border px-3 py-2 rounded-xl">
               <option value="">-- Choose Product --</option>
               <option v-for="product in products" :key="product.productId" :value="product.productId">
-                {{ product.productName }} (Stock: {{ product.stockQuantity }})
+                {{ product.productName }} - ₹{{ product.price }} (Stock: {{ product.stockQuantity }})
               </option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-gray-700 mb-1">Qty</label>
             <input type="number" v-model.number="item.qty" min="1" required class="w-full border px-3 py-2 rounded-xl" />
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">Price</label>
+            <input type="number" :value="item.price" readonly class="w-full border px-3 py-2 rounded-xl bg-gray-50 text-gray-600" />
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">Total</label>
+            <input type="number" :value="item.qty * item.price" readonly class="w-full border px-3 py-2 rounded-xl bg-gray-50 text-gray-600" />
           </div>
           <button
             v-if="saleItems.length > 1"
@@ -52,22 +60,55 @@
       <div v-if="error" class="mt-4 text-red-600 bg-red-100 px-4 py-2 rounded shadow-sm">
         {{ error }}
       </div>
+
+      <!-- Sale Summary -->
+      <div v-if="showSummary" class="mt-6 p-4 border rounded-xl bg-white shadow">
+        <h2 class="text-xl font-semibold text-gray-700 mb-3">🧾 Sale Summary</h2>
+        <p class="mb-2 text-gray-800"><strong>Bill No:</strong> {{ billNo }}</p>
+        <table class="w-full text-left mb-4">
+          <thead>
+            <tr class="text-gray-700 font-semibold border-b">
+              <th class="py-1">Product</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in submittedItems" :key="index" class="text-gray-700">
+              <td>{{ getProductName(item.productId) }}</td>
+              <td>{{ item.qty }}</td>
+              <td>₹{{ item.price }}</td>
+              <td>₹{{ item.qty * item.price }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-lg font-bold text-gray-800">Total: ₹{{ grandTotal }}</p>
+
+        <router-link
+          :to="`/view-bill/${billNo}`"
+          class="inline-block mt-3 text-blue-600 font-semibold hover:underline"
+        >
+          🔍 View Bill Details
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const baseApi = 'https://mobileapi-fbpw.onrender.com/api/Inventory'
 
 const billNo = ref('')
 const products = ref([])
-const saleItems = ref([{ productId: '', qty: 1 }])
+const saleItems = ref([{ productId: '', qty: 1, price: 0 }])
 const message = ref('')
 const error = ref('')
+const showSummary = ref(false)
+const submittedItems = ref([])
 
-// 🧾 Generate unique bill number
 const generateBillNo = () => {
   const now = new Date()
   const random = Math.floor(Math.random() * 1000)
@@ -85,29 +126,37 @@ const fetchProducts = async () => {
 }
 
 const addItem = () => {
-  saleItems.value.push({ productId: '', qty: 1 })
+  saleItems.value.push({ productId: '', qty: 1, price: 0 })
 }
 
 const removeItem = (index) => {
   saleItems.value.splice(index, 1)
 }
 
+const updatePrice = (index) => {
+  const selectedProduct = products.value.find(p => p.productId === saleItems.value[index].productId)
+  saleItems.value[index].price = selectedProduct ? selectedProduct.price : 0
+}
+
 const submitSale = async () => {
   message.value = ''
   error.value = ''
+  showSummary.value = false
 
   try {
     for (const item of saleItems.value) {
       const url = new URL(`${baseApi}/complete-sale`)
       url.searchParams.append('productId', item.productId)
       url.searchParams.append('qty', item.qty)
-      url.searchParams.append('billno', billNo.value)
+      url.searchParams.append('billNo', billNo.value)
 
       const res = await fetch(url, { method: 'POST' })
       if (!res.ok) throw new Error(`Sale failed for product ID ${item.productId}`)
     }
 
     message.value = `✅ All products sold successfully under Bill No: ${billNo.value}`
+    submittedItems.value = [...saleItems.value]
+    showSummary.value = true
     resetForm()
     await fetchProducts()
   } catch (err) {
@@ -115,11 +164,20 @@ const submitSale = async () => {
   }
 }
 
+const getProductName = (productId) => {
+  const product = products.value.find(p => p.productId === productId)
+  return product ? product.productName : 'Unknown'
+}
+
+const grandTotal = computed(() =>
+  submittedItems.value.reduce((total, item) => total + item.qty * item.price, 0)
+)
+
 const resetForm = () => {
-  saleItems.value = [{ productId: '', qty: 1 }]
+  saleItems.value = [{ productId: '', qty: 1, price: 0 }]
   generateBillNo()
-} 
-  
+}
+
 onMounted(() => {
   generateBillNo()
   fetchProducts()
