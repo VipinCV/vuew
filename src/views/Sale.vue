@@ -1,31 +1,43 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white to-gray-100 p-6">
-    <div class="max-w-2xl mx-auto bg-white p-6 shadow-md rounded-xl">
-      <h1 class="text-2xl font-bold mb-4 text-gray-800">💸 Make a Sale</h1>
+    <div class="max-w-4xl mx-auto bg-white p-6 shadow-lg rounded-xl">
+      <h1 class="text-3xl font-bold mb-6 text-gray-800">🛒 Make Multiple Product Sale</h1>
 
-      <form @submit.prevent="submitSale" class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block mb-1 font-semibold text-gray-700">Select Product</label>
-          <select v-model="productId" required class="w-full border px-3 py-2 rounded-xl">
-            <option value="">-- Choose Product --</option>
-            <option v-for="product in products" :key="product.productId" :value="product.productId">
-              {{ product.productName }} (Stock: {{ product.stockQuantity }})
-            </option>
-          </select>
+      <form @submit.prevent="submitSale" class="space-y-4">
+        <div v-for="(item, index) in saleItems" :key="index" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          <div class="col-span-2">
+            <label class="block font-semibold text-gray-700 mb-1">Select Product</label>
+            <select v-model="item.productId" required class="w-full border px-3 py-2 rounded-xl">
+              <option value="">-- Choose Product --</option>
+              <option v-for="product in products" :key="product.productId" :value="product.productId">
+                {{ product.productName }} (Stock: {{ product.stockQuantity }})
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-700 mb-1">Qty</label>
+            <input type="number" v-model.number="item.qty" min="1" required class="w-full border px-3 py-2 rounded-xl" />
+          </div>
+          <button
+            v-if="saleItems.length > 1"
+            @click.prevent="removeItem(index)"
+            class="text-red-600 font-semibold hover:underline"
+          >
+            🗑 Remove
+          </button>
         </div>
 
-        <div>
-          <label class="block mb-1 font-semibold text-gray-700">Quantity</label>
-          <input type="number" v-model.number="qty" min="1" class="w-full border px-3 py-2 rounded-xl" required />
-        </div>
-
-        <div class="text-right">
-          <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-xl hover:bg-green-700">
-            ✅ Complete Sale
+        <div class="flex justify-between mt-4">
+          <button @click.prevent="addItem" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600">
+            ➕ Add More
+          </button>
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700">
+            ✅ Submit Sale
           </button>
         </div>
       </form>
 
+      <!-- Feedback -->
       <div v-if="message" class="mt-4 text-green-700 bg-green-100 px-4 py-2 rounded shadow-sm">
         {{ message }}
       </div>
@@ -42,53 +54,59 @@ import { ref, onMounted } from 'vue'
 const baseApi = 'https://mobileapi-fbpw.onrender.com/api/Inventory'
 
 const products = ref([])
-const productId = ref('')
-const qty = ref(1)
+const saleItems = ref([
+  { productId: '', qty: 1 }
+])
+
 const message = ref('')
 const error = ref('')
 
 const fetchProducts = async () => {
   try {
     const res = await fetch(`${baseApi}/list-products`)
-    if (!res.ok) throw new Error('Failed to fetch products')
+    if (!res.ok) throw new Error('Failed to load products')
     products.value = await res.json()
   } catch (err) {
     error.value = err.message
   }
 }
 
-const submitSale = async () => {
-  error.value = ''
-  message.value = ''
+const addItem = () => {
+  saleItems.value.push({ productId: '', qty: 1 })
+}
 
-  const url = new URL(`${baseApi}/complete-sale`)
-  url.searchParams.append('productId', productId.value)
-  url.searchParams.append('qty', qty.value)
+const removeItem = (index) => {
+  saleItems.value.splice(index, 1)
+}
+
+const submitSale = async () => {
+  message.value = ''
+  error.value = ''
 
   try {
-    const res = await fetch(url, {
-      method: 'POST'
-    })
-    if (!res.ok) throw new Error('Sale failed')
+    for (const item of saleItems.value) {
+      const url = new URL(`${baseApi}/complete-sale`)
+      url.searchParams.append('productId', item.productId)
+      url.searchParams.append('qty', item.qty)
 
-    message.value = '✅ Sale completed successfully!'
-    productId.value = ''
-    qty.value = 1
+      const res = await fetch(url, { method: 'POST' })
+      if (!res.ok) throw new Error(`Sale failed for product ID ${item.productId}`)
+    }
+
+    message.value = '✅ All products sold successfully!'
+    saleItems.value = [{ productId: '', qty: 1 }]
     await fetchProducts()
   } catch (err) {
     error.value = '❌ ' + err.message
   }
 }
 
-onMounted(() => {
-  fetchProducts()
-})
+onMounted(fetchProducts)
 </script>
 
 <style scoped>
 select:focus,
 input:focus {
-  outline: none;
   border-color: #4ade80;
 }
 </style>
