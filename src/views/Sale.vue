@@ -4,6 +4,13 @@
       <h1 class="text-3xl font-bold mb-6 text-gray-800">🛒 Make Multiple Product Sale</h1>
 
       <form @submit.prevent="submitSale" class="space-y-4">
+        <!-- Bill Number -->
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">🧾 Bill No</label>
+          <input type="text" v-model="billNo" readonly class="w-full border px-3 py-2 rounded-xl bg-gray-100 text-gray-600 font-mono" />
+        </div>
+
+        <!-- Sale Items -->
         <div v-for="(item, index) in saleItems" :key="index" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           <div class="col-span-2">
             <label class="block font-semibold text-gray-700 mb-1">Select Product</label>
@@ -27,6 +34,7 @@
           </button>
         </div>
 
+        <!-- Controls -->
         <div class="flex justify-between mt-4">
           <button @click.prevent="addItem" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600">
             ➕ Add More
@@ -53,13 +61,18 @@ import { ref, onMounted } from 'vue'
 
 const baseApi = 'https://mobileapi-fbpw.onrender.com/api/Inventory'
 
+const billNo = ref('')
 const products = ref([])
-const saleItems = ref([
-  { productId: '', qty: 1 }
-])
-
+const saleItems = ref([{ productId: '', qty: 1 }])
 const message = ref('')
 const error = ref('')
+
+// 🧾 Generate unique bill number
+const generateBillNo = () => {
+  const now = new Date()
+  const random = Math.floor(Math.random() * 1000)
+  billNo.value = `BILL-${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}-${now.getHours()}${now.getMinutes()}${now.getSeconds()}-${random}`
+}
 
 const fetchProducts = async () => {
   try {
@@ -83,25 +96,39 @@ const submitSale = async () => {
   message.value = ''
   error.value = ''
 
+  const payload = {
+    billNo: billNo.value,
+    items: saleItems.value.map(item => ({
+      productId: item.productId,
+      qty: item.qty
+    }))
+  }
+
   try {
-    for (const item of saleItems.value) {
-      const url = new URL(`${baseApi}/complete-sale`)
-      url.searchParams.append('productId', item.productId)
-      url.searchParams.append('qty', item.qty)
+    const res = await fetch(`${baseApi}/complete-multi-sale`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
 
-      const res = await fetch(url, { method: 'POST' })
-      if (!res.ok) throw new Error(`Sale failed for product ID ${item.productId}`)
-    }
-
-    message.value = '✅ All products sold successfully!'
-    saleItems.value = [{ productId: '', qty: 1 }]
+    if (!res.ok) throw new Error('Sale failed')
+    message.value = `✅ Products sold successfully under Bill No: ${billNo.value}`
+    resetForm()
     await fetchProducts()
   } catch (err) {
     error.value = '❌ ' + err.message
   }
 }
 
-onMounted(fetchProducts)
+const resetForm = () => {
+  saleItems.value = [{ productId: '', qty: 1 }]
+  generateBillNo()
+}
+
+onMounted(() => {
+  generateBillNo()
+  fetchProducts()
+})
 </script>
 
 <style scoped>
