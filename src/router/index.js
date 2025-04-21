@@ -17,7 +17,7 @@ const routes = [
   { path: '/product', name: 'Product', component: Product },
   { path: '/purchase', name: 'Purchase', component: Purchase },
   { path: '/sale', name: 'Sale', component: Sale },
-   { path: '/bill', name: 'Bill', component: Bill },
+   { path: '/bill::billNo', name: 'Bill', component: Bill },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
