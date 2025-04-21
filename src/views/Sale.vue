@@ -101,7 +101,7 @@ const submitSale = async () => {
       const url = new URL(`${baseApi}/complete-sale`)
       url.searchParams.append('productId', item.productId)
       url.searchParams.append('qty', item.qty)
-      url.searchParams.append('billNo', billNo.value)
+      url.searchParams.append('billno', billNo.value)
 
       const res = await fetch(url, { method: 'POST' })
       if (!res.ok) throw new Error(`Sale failed for product ID ${item.productId}`)
