@@ -63,7 +63,7 @@
     </div>
 
     <!-- Feedback messages remain unchanged -->
-  </div>
+  
 </template>
 
 <script setup>
