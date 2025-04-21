@@ -96,23 +96,18 @@ const submitSale = async () => {
   message.value = ''
   error.value = ''
 
-  const payload = {
-    billNo: billNo.value,
-    items: saleItems.value.map(item => ({
-      productId: item.productId,
-      qty: item.qty
-    }))
-  }
-
   try {
-    const res = await fetch(`${baseApi}/complete-sale`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
+    for (const item of saleItems.value) {
+      const url = new URL(`${baseApi}/complete-sale`)
+      url.searchParams.append('productId', item.productId)
+      url.searchParams.append('qty', item.qty)
+      url.searchParams.append('billNo', billNo.value)
 
-    if (!res.ok) throw new Error('Sale failed')
-    message.value = `✅ Products sold successfully under Bill No: ${billNo.value}`
+      const res = await fetch(url, { method: 'POST' })
+      if (!res.ok) throw new Error(`Sale failed for product ID ${item.productId}`)
+    }
+
+    message.value = `✅ All products sold successfully under Bill No: ${billNo.value}`
     resetForm()
     await fetchProducts()
   } catch (err) {
@@ -123,8 +118,8 @@ const submitSale = async () => {
 const resetForm = () => {
   saleItems.value = [{ productId: '', qty: 1 }]
   generateBillNo()
-}
-
+} 
+  
 onMounted(() => {
   generateBillNo()
   fetchProducts()
