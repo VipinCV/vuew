@@ -6,6 +6,8 @@ import Contact from '../views/Contact.vue'
 import users from '../views/users.vue'
 import Product from '../views/Product.vue'
 import Purchase from '../views/Purchase.vue'
+import Sale from '../views/Sale.vue'
+
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -14,6 +16,7 @@ const routes = [
   { path: '/users', name: 'users', component: users },
   { path: '/product', name: 'Product', component: Product },
   { path: '/purchase', name: 'Purchase', component: Purchase },
+  { path: '/sale', name: 'Sale', component: Sale },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
