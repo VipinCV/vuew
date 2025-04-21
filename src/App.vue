@@ -19,13 +19,17 @@
                 <span class="item-icon">👥</span>
                 <span>Users</span>
               </router-link>
-              <router-link to="/service2" class="dropdown-item">
+              <router-link to="/product" class="dropdown-item">
                 <span class="item-icon">🛠️</span>
-                <span>Service 2</span>
+                <span>Product</span>
               </router-link>
-              <router-link to="/service3" class="dropdown-item">
+              <router-link to="/purchase" class="dropdown-item">
                 <span class="item-icon">🔧</span>
-                <span>Service 3</span>
+                <span>Purchase</span>
+              </router-link>
+              <router-link to="/sale" class="dropdown-item">
+                <span class="item-icon">🔧</span>
+                <span>Sale</span>
               </router-link>
             </div>
           </div>
