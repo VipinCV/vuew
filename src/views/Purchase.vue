@@ -2,10 +2,32 @@
   <div class="p-6 max-w-2xl mx-auto">
     <h1 class="text-2xl font-bold mb-4">Purchase Product</h1>
 
-    <!-- Purchase Form -->
+    <!-- Purchase Form --> 
     <form @submit.prevent="submitPurchase" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <!-- ... (existing form elements remain unchanged) ... -->
+      <div>
+        <label class="block mb-1 font-medium">Select Product</label>
+        <select v-model="selectedProductId" class="w-full border rounded px-3 py-2" required>
+          <option value="" disabled>Select a product</option>
+          <option v-for="product in products" :key="product.productId" :value="product.productId">
+            {{ product.productName }} - Rs:{{ product.price }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1 font-medium">Quantity</label>
+        <input v-model.number="qty" type="number" min="1" class="w-full border rounded px-3 py-2" required />
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Complete Purchase
+        </button>
+      </div>
     </form>
+
+    <!-- Feedback -->
+    <div v-if="message" class="text-green-700 font-medium mb-4">{{ message }}</div>
+    <div v-if="error" class="text-red-600 mb-4">{{ error }}</div>
+  </div>
 
     <!-- Stock Details Table -->
     <div class="mt-8">
@@ -22,14 +44,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in stockDetails" :key="item.productid">
-              <td class="border border-gray-200 px-4 py-2">{{ item.productname }}</td>
+            <tr v-for="item in stockDetails" :key="item.productId">
+              <td class="border border-gray-200 px-4 py-2">{{ item.productName }}</td>
               <td class="border border-gray-200 px-4 py-2">Rs.{{ item.price }}</td>
-              <td class="border border-gray-200 px-4 py-2">{{ item.totalpurchased }}</td>
-              <td class="border border-gray-200 px-4 py-2">{{ item.totalsold }}</td>
+              <td class="border border-gray-200 px-4 py-2">{{ item.totalPurchased }}</td>
+              <td class="border border-gray-200 px-4 py-2">{{ item.totalSold }}</td>
               <td class="border border-gray-200 px-4 py-2 font-medium" 
-                  :class="{'text-green-600': item.currentstock > 0, 'text-red-600': item.currentstock <= 0}">
-                {{ item.currentstock }}
+                  :class="{'text-green-600': item.currentStock > 0, 'text-red-600': item.currentStock <= 0}">
+                {{ item.currentStock }}
               </td>
             </tr>
           </tbody>
