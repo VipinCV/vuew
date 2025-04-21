@@ -7,7 +7,7 @@ import users from '../views/users.vue'
 import Product from '../views/Product.vue'
 import Purchase from '../views/Purchase.vue'
 import Sale from '../views/Sale.vue'
-import Bill from '../views/bill.vue'
+import bill from '../views/bill.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -17,7 +17,7 @@ const routes = [
   { path: '/product', name: 'Product', component: Product },
   { path: '/purchase', name: 'Purchase', component: Purchase },
   { path: '/sale', name: 'Sale', component: Sale },
-   { path: '/bill/:billNo', name: 'Bill', component: Bill },
+   { path: '/bill/:billNo', name: 'bill', component: bill },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
