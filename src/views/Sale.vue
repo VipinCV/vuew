@@ -86,7 +86,7 @@
         <p class="text-lg font-bold text-gray-800">Total: ₹{{ grandTotal }}</p>
 
         <router-link
-          :to="`/view-bill/${billNo}`"
+          :to="`/bill/${billNo}`"
           class="inline-block mt-3 text-blue-600 font-semibold hover:underline"
         >
           🔍 View Bill Details
