@@ -9,10 +9,13 @@
 </template>
 
 <script setup>
+  import { useAuthStore } from '@/stores/auth' // ✅ Only import it
+
+const auth = useAuthStore() // ✅ Use the store
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAuthStore } from './store/auth'
+ 
 
 const router = useRouter()
 const authStore = useAuthStore()
