@@ -33,7 +33,7 @@
               </router-link>
             </div>
           </div>
-          <router-link to="/contact" class="nav-link">Contact</router-link>
+          <router-link to="/login" class="nav-link">Contact</router-link>
         </div>
       </nav>
     </header>
