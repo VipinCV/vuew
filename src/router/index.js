@@ -8,6 +8,7 @@ import Product from '../views/Product.vue'
 import Purchase from '../views/Purchase.vue'
 import Sale from '../views/Sale.vue'
 import bill from '../views/bill.vue'
+import Login from '../views/Login.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -18,6 +19,7 @@ const routes = [
   { path: '/purchase', name: 'Purchase', component: Purchase },
   { path: '/sale', name: 'Sale', component: Sale },
    { path: '/bill/:billNo', name: 'bill', component: bill },
+    { path: '/Login', name: 'Login', component: Login },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
