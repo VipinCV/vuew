@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header v-if="isLoggedIn">
+    <header v-if="isAuthenticated">
       <nav class="navbar">
         <div class="logo">
           <span class="logo-icon">⚡</span>
@@ -46,31 +46,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-  import { useAuthStore } from '@/stores/auth'
-
- 
-const authStore = useAuthStore()
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
-const isLoggedIn = ref(false)
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
 
-onMounted(() => {
-  isLoggedIn.value = !!localStorage.getItem('token')
-})
-
-function logout() { 
-       isLoggedIn.value = false
-       authStore.token = null
-       authStore.refreshToken = null
-      authStore.tokenExpiry = null
-      localStorage.clear() 
+function logout() {
+  authStore.logout()
   router.push('/login')
 }
 </script>
 
 <style>
+/* --- Styles unchanged --- */
 :root {
   --primary-color: #4A90E2;
   --secondary-color: #D4E157;
