@@ -34,6 +34,7 @@
             </div>
           </div>
           <router-link to="/login" class="nav-link">Contact</router-link>
+          <button class="logout-btn" @click="logout">Logout</button>
         </div>
       </nav>
     </header>
@@ -46,9 +47,16 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
-// Detect if token exists in localStorage
-const isLoggedIn = computed(() => !!localStorage.getItem('token'))
+const router = useRouter()
+
+const isLoggedIn = computed(() => !!localStorage.getItem('accessToken'))
+
+function logout() {
+  localStorage.removeItem('accessToken')
+  router.push('/login')
+}
 </script>
 
 <style>
@@ -71,6 +79,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  font-size: 14px;
 }
 
 #app {
@@ -83,11 +92,12 @@ body {
 header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: var(--light-text);
-  padding: 1em 2em;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.6em 1.5em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  font-size: 0.9rem;
 }
 
 .navbar {
@@ -99,17 +109,17 @@ header {
 }
 
 .logo {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   color: var(--light-text);
 }
 
 .nav-links {
   display: flex;
-  gap: 2em;
+  gap: 1.2em;
   align-items: center;
 }
 
@@ -119,30 +129,29 @@ header {
   font-weight: 500;
   position: relative;
   transition: var(--transition);
-  padding: 0.8em 0;
-  font-size: 1.05rem;
+  padding: 0.6em 0;
+  font-size: 0.95rem;
 }
 
 .nav-link:hover {
   color: var(--accent-color);
-  transform: translateY(-2px);
 }
 
-.nav-link.router-link-exact-active {
-  color: var(--accent-color);
-  font-weight: 600;
+.logout-btn {
+  background-color: transparent;
+  border: 1px solid var(--light-text);
+  color: var(--light-text);
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.nav-link.router-link-exact-active::after {
-  content: '';
-  position: absolute;
-  bottom: 0.5em;
-  left: 0;
-  width: 100%;
-  height: 3px;
+.logout-btn:hover {
   background-color: var(--accent-color);
-  border-radius: 3px;
-  animation: underline 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  border-color: var(--accent-color);
+  color: white;
 }
 
 .dropdown {
@@ -153,8 +162,8 @@ header {
 .dropbtn {
   background-color: transparent;
   color: var(--light-text);
-  padding: 0.8em 1.2em;
-  font-size: 1.05rem;
+  padding: 0.6em 1em;
+  font-size: 0.95rem;
   border: none;
   cursor: pointer;
   font-weight: 500;
@@ -166,61 +175,34 @@ header {
   border-radius: 8px;
 }
 
-.dropbtn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--accent-color);
-}
-
-.arrow {
-  border: solid var(--light-text);
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
-  transition: var(--transition);
-}
-
-.down {
-  transform: rotate(45deg);
-}
-
-.dropdown:hover .arrow {
-  transform: rotate(225deg);
-  border-color: var(--accent-color);
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
   background-color: var(--card-bg);
-  min-width: 200px;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   border-radius: var(--border-radius);
   z-index: 10;
   overflow: hidden;
   transform: translateY(10px);
   opacity: 0;
   transition: var(--transition);
-  padding: 0.5rem 0;
+  padding: 0.3rem 0;
 }
 
 .dropdown-item {
   color: var(--text-color);
-  padding: 0.8rem 1.2rem;
+  padding: 0.6rem 1rem;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   transition: var(--transition);
 }
 
 .dropdown-item:hover {
   background-color: rgba(255, 112, 67, 0.1);
   color: var(--accent-color);
-  transform: translateX(5px);
-}
-
-.item-icon {
-  font-size: 1.1rem;
 }
 
 .dropdown:hover .dropdown-content {
@@ -230,22 +212,12 @@ header {
 }
 
 main {
-  padding: 2.5rem;
+  padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
 }
 
-@keyframes underline {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -260,10 +232,12 @@ main {
     margin-top: 1rem;
   }
 
-  .nav-link {
-    padding: 1rem 0;
+  .nav-link,
+  .logout-btn {
+    padding: 0.8rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
+    text-align: left;
   }
 
   .dropdown {
