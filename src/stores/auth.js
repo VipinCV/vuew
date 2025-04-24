@@ -8,6 +8,12 @@ export const useAuthStore = defineStore('auth', {
     tokenExpiry: localStorage.getItem('tokenExpiry') || null,
     refreshTimeout: null,
   }),
+ getters: {
+    // Computed property to check if the user is authenticated
+    isAuthenticated(state) {
+      return !!state.token && state.tokenExpiry > Date.now()
+    },
+  },
 
   actions: {
     setTokens(token, refreshToken) {
@@ -65,7 +71,7 @@ export const useAuthStore = defineStore('auth', {
 
     getHeaders() {
       return {
-        Authorization: Bearer ${this.token},
+           Authorization: `Bearer ${this.token}`,
       }
     },
 
