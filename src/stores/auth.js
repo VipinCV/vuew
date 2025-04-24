@@ -1,35 +1,33 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import api from '@/plugins/axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     tokenExpiry: localStorage.getItem('tokenExpiry') || null,
-    user: null,
+    refreshTimeout: null,
   }),
 
   actions: {
+    setTokens(token, refreshToken) {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      this.token = token
+      this.refreshToken = refreshToken
+      this.tokenExpiry = payload.exp * 1000
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('refreshToken', refreshToken)
+      localStorage.setItem('tokenExpiry', this.tokenExpiry)
+
+      this.scheduleTokenRefresh()
+    },
+
     async login(username, password) {
       try {
-        const response = await axios.post('https://mobileapi-fbpw.onrender.com/Auth/login', {
-          username,
-          password,
-        })
-
+        const response = await api.post('/Auth/login', { username, password })
         const { token, refreshToken } = response.data
-        const payload = JSON.parse(atob(token.split('.')[1]))
-
-        this.token = token
-        this.refreshToken = refreshToken
-        this.tokenExpiry = payload.exp * 1000
-
-        localStorage.setItem('token', token)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('tokenExpiry', this.tokenExpiry)
-
-        this.scheduleTokenRefresh()
-
+        this.setTokens(token, refreshToken)
         return true
       } catch (error) {
         console.error('Login failed:', error)
@@ -41,44 +39,64 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.refreshToken = null
       this.tokenExpiry = null
-      this.user = null
-
-      localStorage.removeItem('token')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('tokenExpiry')
-
-      clearTimeout(this._refreshTimeout)
+      localStorage.clear()
+      clearTimeout(this.refreshTimeout)
     },
 
     scheduleTokenRefresh() {
-      const delay = this.tokenExpiry - Date.now() - 60000 // 1 minute before expiry
-      if (delay > 0) {
-        this._refreshTimeout = setTimeout(() => this.refreshAccessToken(), delay)
+      const expiresIn = this.tokenExpiry - Date.now() - 60000
+      if (expiresIn > 0) {
+        this.refreshTimeout = setTimeout(() => this.refreshTokens(), expiresIn)
       }
     },
 
-    async refreshAccessToken() {
+    async refreshTokens() {
       try {
-        const response = await axios.post('https://mobileapi-fbpw.onrender.com/Auth/refresh', {
+        const response = await api.post('/Auth/refresh', {
           refreshToken: this.refreshToken,
         })
-
         const { token, refreshToken } = response.data
-        const payload = JSON.parse(atob(token.split('.')[1]))
-
-        this.token = token
-        this.refreshToken = refreshToken
-        this.tokenExpiry = payload.exp * 1000
-
-        localStorage.setItem('token', token)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('tokenExpiry', this.tokenExpiry)
-
-        this.scheduleTokenRefresh()
+        this.setTokens(token, refreshToken)
       } catch (error) {
         console.error('Token refresh failed:', error)
         this.logout()
       }
+    },
+
+    getHeaders() {
+      return {
+        Authorization: `Bearer ${this.token}`,
+      }
+    },
+
+    async get(url, config = {}) {
+      return api.get(url, {
+        ...config,
+        headers: {
+          ...this.getHeaders(),
+          ...config.headers,
+        },
+      })
+    },
+
+    async post(url, data, config = {}) {
+      return api.post(url, data, {
+        ...config,
+        headers: {
+          ...this.getHeaders(),
+          ...config.headers,
+        },
+      })
+    },
+
+    async put(url, data, config = {}) {
+      return api.put(url, data, {
+        ...config,
+        headers: {
+          ...this.getHeaders(),
+          ...config.headers,
+        },
+      })
     },
   },
 })
