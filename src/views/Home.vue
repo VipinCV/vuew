@@ -58,7 +58,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/plugins/axios' // Use centralized Axios instance
 
 const name = ref('')
 const price = ref(0)
@@ -68,14 +68,12 @@ const message = ref('')
 const error = ref('')
 const products = ref([])
 
-const baseApi = 'https://mobileapi-fbpw.onrender.com/api/Inventory'
-
 const submitProduct = async () => {
   message.value = ''
   error.value = ''
 
   try {
-    const response = await axios.post(`${baseApi}/add-product`, null, {
+    const response = await api.post('/api/Inventory/add-product', null, {
       params: {
         name: name.value,
         price: price.value,
@@ -96,7 +94,7 @@ const submitProduct = async () => {
 
 const fetchProducts = async () => {
   try {
-    const res = await axios.get(`${baseApi}/vw-stock`)
+    const res = await api.get('/api/Inventory/vw-stock')
     products.value = res.data
   } catch (err) {
     error.value = '❌ Failed to load products: ' + (err.response?.data?.message || err.message)
