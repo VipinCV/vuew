@@ -12,16 +12,16 @@ import Login from '../views/Login.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const routes = [
-  { path: '/', name: 'Home', component: Home },
+  { path: '/', name: 'Home', component: Home, meta: { requiresAuth: true } },
   { path: '/about', name: 'About', component: About },
   { path: '/contact', name: 'Contact', component: Contact },
-  { path: '/users', name: 'users', component: users },
-  { path: '/product', name: 'Product', component: Product },
-  { path: '/purchase', name: 'Purchase', component: Purchase },
-  { path: '/sale', name: 'Sale', component: Sale },
-   { path: '/bill/:billNo', name: 'bill', component: bill },
+  { path: '/users', name: 'users', component: users, meta: { requiresAuth: true } },
+  { path: '/product', name: 'Product', component: Product, meta: { requiresAuth: true } },
+  { path: '/purchase', name: 'Purchase', component: Purchase, meta: { requiresAuth: true } },
+  { path: '/sale', name: 'Sale', component: Sale, meta: { requiresAuth: true } },
+   { path: '/bill/:billNo', name: 'bill', component: bill, meta: { requiresAuth: true } },
     { path: '/login', name: 'Login', component: Login },
-  { path: '/:pathMatch(.*)*', redirect: '/' }
+  { path: '/:pathMatch(.*)*', redirect: '/login' }
 ]
 
 const router = createRouter({
