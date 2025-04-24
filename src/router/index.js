@@ -21,7 +21,7 @@ const routes = [
   { path: '/sale', name: 'Sale', component: Sale, meta: { requiresAuth: true } },
    { path: '/bill/:billNo', name: 'bill', component: bill, meta: { requiresAuth: true } },
     { path: '/login', name: 'Login', component: Login },
-  { path: '/:pathMatch(.*)*', redirect: '/login' }
+  { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
 const router = createRouter({
