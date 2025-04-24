@@ -9,7 +9,6 @@ export const useAuthStore = defineStore('auth', {
     refreshTimeout: null,
   }),
 
- 
   actions: {
     setTokens(token, refreshToken) {
       const payload = JSON.parse(atob(token.split('.')[1]))
