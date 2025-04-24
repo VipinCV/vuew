@@ -9,13 +9,7 @@ export const useAuthStore = defineStore('auth', {
     refreshTimeout: null,
   }),
 
-  getters: {
-    // Computed property to check if the user is authenticated
-    isAuthenticated(state) {
-      return !!state.token && state.tokenExpiry > Date.now()
-    },
-  },
-
+ 
   actions: {
     setTokens(token, refreshToken) {
       const payload = JSON.parse(atob(token.split('.')[1]))
