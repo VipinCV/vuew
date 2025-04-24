@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header>
+    <header v-if="isLoggedIn">
       <nav class="navbar">
         <div class="logo">
           <span class="logo-icon">⚡</span>
@@ -37,11 +37,19 @@
         </div>
       </nav>
     </header>
+
     <main>
       <router-view />
     </main>
   </div>
 </template>
+
+<script setup>
+import { computed } from 'vue'
+
+// Detect if token exists in localStorage
+const isLoggedIn = computed(() => !!localStorage.getItem('accessToken'))
+</script>
 
 <style>
 :root {
@@ -137,7 +145,6 @@ header {
   animation: underline 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-/* Dropdown styles */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -238,7 +245,7 @@ main {
   }
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
