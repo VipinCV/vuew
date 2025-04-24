@@ -58,6 +58,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
 const name = ref('')
 const price = ref(0)
@@ -73,14 +74,14 @@ const submitProduct = async () => {
   message.value = ''
   error.value = ''
 
-  const url = new URL(`${baseApi}/add-product`)
-  url.searchParams.append('name', name.value)
-  url.searchParams.append('price', price.value)
-  url.searchParams.append('stock', stock.value)
-
   try {
-    const response = await fetch(url, { method: 'POST' })
-    if (!response.ok) throw new Error('Server returned ' + response.status)
+    const response = await axios.post(`${baseApi}/add-product`, null, {
+      params: {
+        name: name.value,
+        price: price.value,
+        stock: stock.value
+      }
+    })
 
     message.value = '✅ Product added successfully!'
     name.value = ''
@@ -89,17 +90,16 @@ const submitProduct = async () => {
 
     await fetchProducts()
   } catch (err) {
-    error.value = '❌ Failed to add product: ' + err.message
+    error.value = '❌ Failed to add product: ' + (err.response?.data?.message || err.message)
   }
 }
 
 const fetchProducts = async () => {
   try {
-    const res = await fetch(`${baseApi}/vw-stock`)
-    if (!res.ok) throw new Error('Error loading stock view.')
-    products.value = await res.json()
+    const res = await axios.get(`${baseApi}/vw-stock`)
+    products.value = res.data
   } catch (err) {
-    error.value = err.message
+    error.value = '❌ Failed to load products: ' + (err.response?.data?.message || err.message)
   }
 }
 
