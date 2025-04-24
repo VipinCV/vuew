@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/plugins/axios'
+import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -8,6 +9,13 @@ export const useAuthStore = defineStore('auth', {
     tokenExpiry: localStorage.getItem('tokenExpiry') || null,
     refreshTimeout: null,
   }),
+
+  getters: {
+    // Computed property to check if the user is authenticated
+    isAuthenticated(state) {
+      return !!state.token && state.tokenExpiry > Date.now()
+    },
+  },
 
   actions: {
     setTokens(token, refreshToken) {
@@ -60,6 +68,8 @@ export const useAuthStore = defineStore('auth', {
       } catch (error) {
         console.error('Token refresh failed:', error)
         this.logout()
+        const router = useRouter()
+        router.push('/login') // Redirect to login page after failed refresh
       }
     },
 
@@ -98,5 +108,17 @@ export const useAuthStore = defineStore('auth', {
         },
       })
     },
+
+    checkTokenExpiry() {
+      if (this.tokenExpiry && Date.now() > this.tokenExpiry) {
+        this.logout()
+        const router = useRouter()
+        router.push('/login') // Redirect to login if token has expired
+      }
+    },
   },
 })
+
+// On app load, call checkTokenExpiry to handle expired tokens immediately.
+const authStore = useAuthStore()
+authStore.checkTokenExpiry()
