@@ -51,10 +51,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const isLoggedIn = computed(() => !!localStorage.getItem('accessToken'))
+const isLoggedIn = computed(() => !!localStorage.getItem('token'))
 
 function logout() {
-  localStorage.removeItem('accessToken')
+  localStorage.removeItem('token')
   router.push('/login')
 }
 </script>
