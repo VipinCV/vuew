@@ -48,6 +48,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+  import { useAuthStore } from '@/stores/auth'
+
+ 
+const authStore = useAuthStore()
 
 const router = useRouter()
 const isLoggedIn = ref(false)
@@ -56,9 +60,13 @@ onMounted(() => {
   isLoggedIn.value = !!localStorage.getItem('token')
 })
 
-function logout() {
-  localStorage.removeItem('token')
-  isLoggedIn.value = false
+function logout() { 
+       isLoggedIn.value = false
+       authStore.token = null
+       authStore.refreshToken = null
+      authStore.tokenExpiry = null
+      localStorage.clear()
+      clearTimeout(this.refreshTimeout)
   router.push('/login')
 }
 </script>
