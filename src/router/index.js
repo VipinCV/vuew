@@ -9,6 +9,7 @@ import Purchase from '../views/Purchase.vue'
 import Sale from '../views/Sale.vue'
 import bill from '../views/bill.vue'
 import Login from '../views/Login.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -26,6 +27,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  const isLoggedIn = !!authStore.token || !!localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
 })
+
+
 
 export default router
