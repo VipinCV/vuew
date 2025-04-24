@@ -65,8 +65,7 @@ function logout() {
        authStore.token = null
        authStore.refreshToken = null
       authStore.tokenExpiry = null
-      localStorage.clear()
-      clearTimeout(this.refreshTimeout)
+      localStorage.clear() 
   router.push('/login')
 }
 </script>
