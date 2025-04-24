@@ -48,7 +48,7 @@
 import { computed } from 'vue'
 
 // Detect if token exists in localStorage
-const isLoggedIn = computed(() => !!localStorage.getItem('accessToken'))
+const isLoggedIn = computed(() => !!localStorage.getItem('token'))
 </script>
 
 <style>
