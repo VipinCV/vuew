@@ -46,15 +46,19 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const isLoggedIn = ref(false)
 
-const isLoggedIn = computed(() => !!localStorage.getItem('token'))
+onMounted(() => {
+  isLoggedIn.value = !!localStorage.getItem('token')
+})
 
 function logout() {
   localStorage.removeItem('token')
+  isLoggedIn.value = false
   router.push('/login')
 }
 </script>
