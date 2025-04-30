@@ -44,7 +44,12 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       try {
          const token= localStorage.getItem('token') || null;
-         const response = await api.post('/Auth/logout', { token })
+           const response = await api.post('/Auth/logout', token, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        });
          const   resp   = response.data 
           this.token = null
           this.refreshToken = null
